@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+
+{% block title %}Dashboard - ShopKart{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+  <div class="section-head d-flex justify-content-between align-items-center mb-4">
+    <h1>Admin Dashboard</h1>
+
+    <a href="/admin/" class="btn btn-dark">
+      Django Admin
+    </a>
+  </div>
+
+  <!-- STATS -->
+
+  <div class="stats-grid mb-4">
+
+    <div class="stat">
+      <span>Total Orders</span>
+      <strong>{{ total_orders }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>Total Users</span>
+      <strong>{{ total_users }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>Total Revenue</span>
+      <strong>{{ total_revenue|money }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>Low Stock</span>
+      <strong>{{ low_stock|length }}</strong>
+    </div>
+
+  </div>
+
+  <div class="row g-4">
+
+    <!-- RECENT ORDERS -->
+
+    <div class="col-lg-8">
+
+      <div class="form-card">
+
+        <h4 class="mb-4">Recent Orders</h4>
+
+        {% for order in recent_orders %}
+
+        <div class="dashboard-row border rounded p-3 mb-3">
+
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <!-- ORDER INFO -->
+
+            <div>
+
+              <h6 class="mb-1">
+                {{ order.order_number }}
+              </h6>
+
+              <div class="text-secondary small">
+                {{ order.user.username }}
+              </div>
+
+              <div class="fw-bold mt-1">
+                {{ order.total|money }}
+              </div>
+
+            </div>
+
+            <!-- STATUS BADGE -->
+
+            <div>
+
+              {% if order.status == "pending" %}
+                <span class="badge bg-warning text-dark">
+                  Pending
+                </span>
+
+              {% elif order.status == "confirmed" %}
+                <span class="badge bg-info">
+                  Confirmed
+                </span>
+
+              {% elif order.status == "shipped" %}
+                <span class="badge bg-primary">
+                  Shipped
+                </span>
+
+              {% elif order.status == "delivered" %}
+                <span class="badge bg-success">
+                  Delivered
+                </span>
+
+              {% elif order.status == "cancelled" %}
+                <span class="badge bg-danger">
+                  Cancelled
+                </span>
+              {% endif %}
+
+            </div>
+
+            <!-- STATUS UPDATE FORM -->
+
+            <form
+              method="post"
+              action="{% url 'update_order_status' order.id %}"
+              class="d-flex gap-2 align-items-center"
+            >
+
+              {% csrf_token %}
+
+              <select
+                class="form-select form-select-sm"
+                name="status"
+              >
+
+                {% for code,label in order.STATUS_CHOICES %}
+
+                <option
+                  value="{{ code }}"
+                  {% if order.status == code %}selected{% endif %}
+                >
+                  {{ label }}
+                </option>
+
+                {% endfor %}
+
+              </select>
+
+              <button class="btn btn-dark btn-sm">
+                Update
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+        {% empty %}
+
+        <p class="text-secondary">
+          No recent orders found.
+        </p>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <div class="col-lg-4">
+
+      <!-- LOW STOCK -->
+
+      <div class="form-card">
+
+        <h4 class="mb-3">
+          Low Stock Products
+        </h4>
+
+        {% for product in low_stock %}
+
+        <div class="d-flex justify-content-between border-bottom py-2">
+
+          <span>{{ product.name }}</span>
+
+          <strong>{{ product.stock }}</strong>
+
+        </div>
+
+        {% empty %}
+
+        <p class="text-secondary">
+          Stock is healthy.
+        </p>
+
+        {% endfor %}
+
+      </div>
+
+      <!-- CHART -->
+
+      <div class="form-card mt-4">
+
+        <h4 class="mb-3">
+          Revenue Analytics
+        </h4>
+
+        <canvas
+          id="statusChart"
+          height="180"
+          data-status='[
+          {% for row in status_counts %}
+          {
+            "label":"{{ row.status }}",
+            "count":{{ row.count }}
+          }
+          {% if not forloop.last %},{% endif %}
+          {% endfor %}
+          ]'
+        ></canvas>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

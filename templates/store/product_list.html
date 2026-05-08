@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Products - ShopKart{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <aside class="col-lg-3">
+      <form class="filter-panel" method="get">
+        <h5>Filters</h5>
+        <input class="form-control mb-3" name="q" value="{{ request.GET.q }}" placeholder="Search">
+        <select class="form-select mb-3" name="category">
+          <option value="">All categories</option>
+          {% for category in categories %}
+            <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="row g-2">
+          <div class="col"><input class="form-control" name="min_price" value="{{ request.GET.min_price }}" placeholder="Min"></div>
+          <div class="col"><input class="form-control" name="max_price" value="{{ request.GET.max_price }}" placeholder="Max"></div>
+        </div>
+        <select class="form-select my-3" name="sort">
+          <option value="">Featured</option>
+          <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price low to high</option>
+          <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price high to low</option>
+          <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest</option>
+          <option value="rating" {% if request.GET.sort == 'rating' %}selected{% endif %}>Top rated</option>
+        </select>
+        <button class="btn btn-dark w-100">Apply</button>
+      </form>
+    </aside>
+    <section class="col-lg-9">
+      <div class="section-head">
+        <h1>Products</h1>
+        <span class="text-secondary">{{ page_obj.paginator.count }} results</span>
+      </div>
+      <div class="row g-4">
+        {% for product in page_obj %}
+          <div class="col-6 col-md-4">{% include 'store/_product_card.html' %}</div>
+        {% empty %}
+          <div class="col"><div class="empty-state">No products found.</div></div>
+        {% endfor %}
+      </div>
+      {% if page_obj.has_other_pages %}
+      <nav class="mt-4">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>{% endif %}
+          <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
+          {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>{% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

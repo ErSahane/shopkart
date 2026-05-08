@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+{% block title %}Orders - ShopKart{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1>Order History</h1>
+  {% for order in orders %}
+  <a class="order-row" href="{% url 'order_detail' order.order_number %}">
+    <div><strong>{{ order.order_number }}</strong><div class="text-secondary">{{ order.created_at|date:"d M Y" }}</div></div>
+    <span class="status">{{ order.get_status_display }}</span>
+    <strong>{{ order.total|money }}</strong>
+  </a>
+  {% empty %}
+  <div class="empty-state">No orders yet.</div>
+  {% endfor %}
+</div>
+{% endblock %}

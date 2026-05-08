@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+{% block title %}Cart - ShopKart{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="section-head"><h1>Your Cart</h1><a href="{% url 'products' %}">Continue shopping</a></div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      {% for item in cart.items.all %}
+      <div class="line-item">
+        <div class="line-img">{% if item.product.image %}<img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">{% else %}{{ item.product.name|slice:":1" }}{% endif %}</div>
+        <div class="flex-grow-1">
+          <a class="fw-semibold text-dark" href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a>
+          <div class="text-secondary">{{ item.product.price|money }}</div>
+        </div>
+        <form method="post" action="{% url 'update_cart' item.id %}" class="d-flex gap-2">{% csrf_token %}
+          <input class="form-control qty-input" type="number" min="0" name="quantity" value="{{ item.quantity }}">
+          <button class="btn btn-outline-dark btn-sm">Update</button>
+        </form>
+        <strong>{{ item.line_total|money }}</strong>
+        <form method="post" action="{% url 'remove_cart_item' item.id %}">{% csrf_token %}<button class="btn btn-link text-danger">Remove</button></form>
+      </div>
+      {% empty %}
+      <div class="empty-state">Your cart is empty.</div>
+      {% endfor %}
+    </div>
+    <aside class="col-lg-4">
+      <div class="summary">
+        <h4>Order Summary</h4>
+        <div class="d-flex justify-content-between"><span>Subtotal</span><strong>{{ cart.subtotal|money }}</strong></div>
+        <div class="d-flex justify-content-between"><span>Shipping</span><span>Free over Rs. 999</span></div>
+        <hr>
+        <a class="btn btn-dark w-100" href="{% url 'checkout' %}">Checkout</a>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,324 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% load shop_tags %}
+
+{% block title %}
+Checkout - ShopKart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+  <h1>Checkout</h1>
+
+  <form
+    id="checkout-form"
+    method="post"
+    action="{% url 'place_order' %}"
+    class="row g-4"
+  >
+
+    {% csrf_token %}
+
+    <!-- HIDDEN INPUTS -->
+
+    <input type="hidden"
+           name="razorpay_payment_id"
+           id="razorpay_payment_id">
+
+    <input type="hidden"
+           name="razorpay_order_id"
+           id="razorpay_order_id">
+
+    <input type="hidden"
+           name="razorpay_signature"
+           id="razorpay_signature">
+
+    <!-- LEFT SIDE -->
+
+    <div class="col-lg-8">
+
+      <!-- ADDRESS -->
+
+      <div class="form-card mb-4">
+
+        <h4>Shipping Address</h4>
+
+        {% for address in addresses %}
+
+        <label class="address-option">
+
+          <input
+            type="radio"
+            name="address_id"
+            value="{{ address.id }}"
+            {% if address.is_default or forloop.first %}checked{% endif %}
+          >
+
+          <span>
+
+            <strong>
+              {{ address.full_name }}
+            </strong>
+
+            <br>
+
+            {{ address.line1 }},
+            {{ address.city }},
+            {{ address.state }}
+            {{ address.postal_code }}
+
+            <br>
+
+            {{ address.phone }}
+
+          </span>
+
+        </label>
+
+        {% endfor %}
+
+        <!-- ADD NEW ADDRESS -->
+
+        <div class="accordion mt-3" id="addr">
+
+          <div class="accordion-item">
+
+            <h2 class="accordion-header">
+
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#newaddr"
+              >
+                Add new address
+              </button>
+
+            </h2>
+
+            <div id="newaddr" class="accordion-collapse collapse">
+
+              <div class="accordion-body form-grid">
+
+                {{ address_form.as_p }}
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PAYMENT -->
+
+      <div class="form-card">
+
+        <h4>Payment</h4>
+
+        <label class="address-option">
+
+          <input
+            type="radio"
+            name="payment_method"
+            value="cod"
+            checked
+          >
+
+          <span>
+            Cash on Delivery
+          </span>
+
+        </label>
+
+        <label class="address-option">
+
+          <input
+            type="radio"
+            name="payment_method"
+            value="gateway"
+          >
+
+          <span>
+            Online Payment (Razorpay)
+          </span>
+
+        </label>
+
+        <input
+          class="form-control mt-3"
+          name="coupon_code"
+          placeholder="Coupon code"
+        >
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <aside class="col-lg-4">
+
+      <div class="summary">
+
+        <h4>Order Summary</h4>
+
+        {% for item in cart.items.all %}
+
+        <div class="d-flex justify-content-between small mb-2">
+
+          <span>
+            {{ item.product.name }} × {{ item.quantity }}
+          </span>
+
+          <strong>
+            {{ item.line_total|money }}
+          </strong>
+
+        </div>
+
+        {% endfor %}
+
+        <hr>
+
+        <div class="d-flex justify-content-between">
+
+          <span>Subtotal</span>
+
+          <strong>
+            {{ cart.subtotal|money }}
+          </strong>
+
+        </div>
+
+        <button
+          type="button"
+          id="rzp-button1"
+          class="btn btn-dark w-100 mt-3"
+        >
+          Place Order
+        </button>
+
+      </div>
+
+    </aside>
+
+  </form>
+
+</div>
+
+<!-- RAZORPAY VARIABLES -->
+
+<script>
+
+    const razorpayKeyId =
+        "{{ razorpay_key_id }}";
+
+    const razorpayAmount =
+        "{{ amount }}";
+
+    const razorpayOrderId =
+        "{{ razorpay_order_id }}";
+
+</script>
+
+<!-- RAZORPAY -->
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+document.getElementById('rzp-button1').onclick = function(e) {
+
+    let paymentMethod =
+        document.querySelector(
+            'input[name="payment_method"]:checked'
+        ).value;
+
+    // CASH ON DELIVERY
+    if(paymentMethod === "cod"){
+
+        document.getElementById(
+            "checkout-form"
+        ).submit();
+
+        return;
+    }
+
+    // ONLINE PAYMENT
+
+    e.preventDefault();
+
+    var options = {
+
+        "key": razorpayKeyId,
+
+        "amount": razorpayAmount,
+
+        "currency": "INR",
+
+        "name": "ShopKart",
+
+        "description": "Order Payment",
+
+        "order_id": razorpayOrderId,
+
+        "handler": function (response){
+
+            // SAVE VALUES
+
+            document.getElementById(
+                "razorpay_payment_id"
+            ).value =
+                response.razorpay_payment_id;
+
+            document.getElementById(
+                "razorpay_order_id"
+            ).value =
+                response.razorpay_order_id;
+
+            document.getElementById(
+                "razorpay_signature"
+            ).value =
+                response.razorpay_signature;
+
+            // SUBMIT FORM
+
+            document.getElementById(
+                "checkout-form"
+            ).submit();
+        },
+
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+
+    // PAYMENT FAILED
+
+    rzp1.on(
+        'payment.failed',
+        function (response){
+
+            console.log(response.error);
+
+            alert(
+                "Payment Failed"
+            );
+        }
+    );
+
+    rzp1.open();
+};
+
+</script>
+
+{% endblock %}
+```

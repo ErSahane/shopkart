@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Wishlist - ShopKart{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="section-head"><h1>Wishlist</h1><a href="{% url 'products' %}">Browse more</a></div>
+  <div class="row g-4">
+    {% for item in items %}
+      <div class="col-6 col-md-4 col-xl-3">{% with product=item.product %}{% include 'store/_product_card.html' %}{% endwith %}</div>
+    {% empty %}
+      <div class="col"><div class="empty-state">Your wishlist is empty.</div></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

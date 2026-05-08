@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+
+{% block title %}
+Order {{ order.order_number }} - ShopKart
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+  <!-- HEADER -->
+
+  <div class="section-head d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+    <div>
+
+      <h1 class="mb-1">
+        {{ order.order_number }}
+      </h1>
+
+      <p class="text-secondary mb-0">
+        Placed {{ order.created_at|date:"d M Y" }}
+      </p>
+
+    </div>
+
+    <a
+      class="btn btn-outline-dark"
+      href="{% url 'invoice' order.order_number %}"
+    >
+      Download Invoice
+    </a>
+
+  </div>
+
+  <!-- STATUS TRACKER -->
+
+  <div class="tracking mb-5">
+
+    {% for code,label in order.STATUS_CHOICES %}
+
+      <div class="{% if code == order.status %}active{% endif %}">
+        {{ label }}
+      </div>
+
+    {% endfor %}
+
+  </div>
+
+  <!-- ORDER STATUS BADGE -->
+
+  <div class="mb-4">
+
+    <strong>Status:</strong>
+
+    {% if order.status == "pending" %}
+      <span class="badge bg-warning text-dark">
+        Pending
+      </span>
+
+    {% elif order.status == "confirmed" %}
+      <span class="badge bg-info">
+        Confirmed
+      </span>
+
+    {% elif order.status == "shipped" %}
+      <span class="badge bg-primary">
+        Shipped
+      </span>
+
+    {% elif order.status == "delivered" %}
+      <span class="badge bg-success">
+        Delivered
+      </span>
+
+    {% elif order.status == "cancelled" %}
+      <span class="badge bg-danger">
+        Cancelled
+      </span>
+    {% endif %}
+
+  </div>
+
+  <div class="row g-4">
+
+    <!-- PRODUCTS -->
+
+    <div class="col-lg-8">
+
+      <div class="form-card">
+
+        <h4 class="mb-4">
+          Ordered Products
+        </h4>
+
+        {% for item in order.items.all %}
+
+        <div class="line-item border-bottom pb-3 mb-3">
+
+          <div class="line-img">
+            {{ item.product_name|slice:":1" }}
+          </div>
+
+          <div class="flex-grow-1">
+
+            <strong>
+              {{ item.product_name }}
+            </strong>
+
+            <div class="text-secondary small">
+              Quantity: {{ item.quantity }}
+            </div>
+
+            <div class="small">
+              Price:
+              {{ item.price|money }}
+            </div>
+
+          </div>
+
+          <strong>
+            {{ item.line_total|money }}
+          </strong>
+
+        </div>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <aside class="col-lg-4">
+
+      <!-- PAYMENT -->
+
+      <div class="summary mb-4">
+
+        <h4 class="mb-3">
+          Payment Details
+        </h4>
+
+        <p class="mb-2">
+
+          <strong>Method:</strong>
+
+          {{ order.get_payment_method_display }}
+
+        </p>
+
+        <p>
+
+          <strong>Status:</strong>
+
+          {% if order.payment.status == "paid" %}
+
+            <span class="badge bg-success">
+              Paid
+            </span>
+
+          {% else %}
+
+            <span class="badge bg-warning text-dark">
+              Pending
+            </span>
+
+          {% endif %}
+
+        </p>
+
+        <hr>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Subtotal</span>
+          <strong>{{ order.subtotal|money }}</strong>
+        </div>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Discount</span>
+          <strong>{{ order.discount|money }}</strong>
+        </div>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span>Shipping</span>
+          <strong>{{ order.shipping_fee|money }}</strong>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between fs-5">
+          <span>Total</span>
+          <strong>{{ order.total|money }}</strong>
+        </div>
+
+      </div>
+
+      <!-- SHIPPING ADDRESS -->
+
+      <div class="summary">
+
+        <h4 class="mb-3">
+          Shipping Address
+        </h4>
+
+        <p class="mb-1">
+          <strong>{{ order.address.full_name }}</strong>
+        </p>
+
+        <p class="mb-1">
+          {{ order.address.line1 }}
+        </p>
+
+        {% if order.address.line2 %}
+        <p class="mb-1">
+          {{ order.address.line2 }}
+        </p>
+        {% endif %}
+
+        <p class="mb-1">
+          {{ order.address.city }},
+          {{ order.address.state }}
+        </p>
+
+        <p class="mb-1">
+          {{ order.address.postal_code }}
+        </p>
+
+        <p class="mb-0">
+          {{ order.address.phone }}
+        </p>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<button id="rzp-button1">Pay Now</button>
+
+<script>
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ payment.amount }}",
+    "currency": "INR",
+    "name": "ShopKart",
+    "description": "Order Payment",
+    "order_id": "{{ payment.id }}",
+
+    "handler": function (response){
+        alert("Payment Successful");
+
+        window.location.href = "/success/";
+    },
+
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Verify Email - ShopKart{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <form class="auth-card" method="post">{% csrf_token %}
+    <h1>Email OTP</h1>
+    <p class="text-secondary">Enter the six-digit code sent to your email. In development it appears in the terminal console.</p>
+    {{ form.as_p }}
+    <button class="btn btn-dark w-100">Verify</button>
+  </form>
+</div>
+{% endblock %}

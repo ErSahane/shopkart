@@ -1,0 +1,137 @@
+:root{--ink:#101828;--muted:#667085;--line:#e4e7ec;--soft:#f8fafc;--accent:#0f766e;--gold:#f59e0b}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:#fff}
+a{text-decoration:none}.navbar-brand{font-size:1.6rem;color:var(--accent)}.search-shell{max-width:560px;width:100%}
+.hero{background:linear-gradient(135deg,#ecfeff,#fff7ed);padding:72px 0 56px;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:36px;align-items:center}.hero h1{font-size:clamp(3rem,8vw,6rem);font-weight:850;letter-spacing:0;margin:0}
+.hero p{font-size:1.18rem;color:var(--muted);max-width:650px}.eyebrow{font-weight:700;color:var(--accent);text-transform:uppercase;font-size:.8rem}
+.hero-panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:32px;box-shadow:0 18px 55px rgba(16,24,40,.08)}.hero-product{color:var(--gold);font-weight:800}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.section-head h1,.section-head h2,.section-head h3{font-weight:800;margin:0}
+.category-row{display:flex;gap:12px;overflow:auto;padding-bottom:8px}.category-pill{border:1px solid var(--line);border-radius:999px;padding:11px 18px;color:var(--ink);background:#fff;white-space:nowrap}.category-pill:hover{background:var(--ink);color:#fff}
+.product-card{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;transition:.18s ease;position:relative}.product-card:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(16,24,40,.08)}
+.product-img{display:block;aspect-ratio:1/1;background:var(--soft);position:relative;overflow:hidden}.product-img img,.detail-image img,.line-img img{width:100%;height:100%;object-fit:cover}
+.placeholder-img{height:100%;display:grid;place-items:center;font-size:4rem;font-weight:850;color:var(--accent);background:linear-gradient(135deg,#ccfbf1,#fef3c7)}.placeholder-img.big{min-height:420px}
+.deal-badge{position:absolute;top:10px;left:10px;background:#111827;color:#fff;border-radius:999px;padding:5px 10px;font-size:.75rem}.product-title{display:block;color:var(--ink);font-weight:700;min-height:48px}.rating{color:var(--gold);font-weight:700}
+.filter-panel,.summary,.form-card,.auth-card{border:1px solid var(--line);border-radius:8px;padding:22px;background:#fff;box-shadow:0 8px 28px rgba(16,24,40,.05)}
+.detail-image{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--soft)}.qty-input{width:86px}.line-item{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px;background:#fff}
+.line-img{width:74px;height:74px;border-radius:8px;background:#ecfeff;display:grid;place-items:center;font-weight:800;color:var(--accent);overflow:hidden;flex:0 0 74px}
+.empty-state{border:1px dashed var(--line);border-radius:8px;padding:40px;text-align:center;background:var(--soft)}.review{border-bottom:1px solid var(--line);padding:14px 0}
+.address-option{display:flex;gap:12px;border:1px solid var(--line);border-radius:8px;padding:14px;margin:10px 0;cursor:pointer}.address-option:has(input:checked){border-color:var(--accent);background:#f0fdfa}
+.order-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:18px;border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:12px;color:var(--ink);background:#fff}.status{background:#ecfeff;color:#0f766e;border-radius:999px;padding:6px 12px;font-weight:700}
+.tracking{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.tracking div{border:1px solid var(--line);border-radius:8px;padding:12px;text-align:center;color:var(--muted)}.tracking .active{background:#111827;color:#fff}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.stat{border:1px solid var(--line);border-radius:8px;padding:22px;background:#fff}.stat span{color:var(--muted)}.stat strong{display:block;font-size:2rem}
+.auth-wrap{min-height:72vh;display:grid;place-items:center;padding:40px 16px;background:var(--soft)}.auth-card{max-width:460px;width:100%}.auth-card h1{font-weight:800}.form-card p label,.auth-card p label{font-weight:700}.form-card input,.form-card textarea,.form-card select,.auth-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.footer{background:#f9fafb;border-top:1px solid var(--line)}
+@media (max-width: 991px){.hero-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.order-row{grid-template-columns:1fr}.tracking{grid-template-columns:1fr 1fr}.line-item{align-items:flex-start;flex-wrap:wrap}}
+@media (max-width: 575px){.hero{padding:48px 0 36px}.stats-grid{grid-template-columns:1fr}.product-title{min-height:60px}.line-img{width:58px;height:58px;flex-basis:58px}.tracking{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
+
+
+
+.dark-mode .nav-link,
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode span,
+.dark-mode strong,
+.dark-mode label,
+.dark-mode td,
+.dark-mode th {
+    color: #f8fafc !important;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select,
+.dark-mode textarea {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #cbd5e1 !important;
+}
+
+.dark-mode .btn-dark {
+    background: #2563eb !important;
+    border: none !important;
+}
+
+.dark-mode .btn-outline-dark {
+    border-color: #f8fafc !important;
+    color: #f8fafc !important;
+}
+
+.dark-mode .btn-outline-dark:hover {
+    background: #f8fafc !important;
+    color: #0f172a !important;
+}
+
+.dark-mode .accordion-button {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+.dark-mode .dropdown-menu {
+    background: #1e293b !important;
+}
+
+.dark-mode .dropdown-item {
+    color: #f8fafc !important;
+}
+
+.dark-mode .dropdown-item:hover {
+    background: #334155 !important;
+}
+
+/* =========================
+DARK MODE FINAL
+========================= */
+
+body.dark-mode {
+background: #0f172a !important;
+color: white !important;
+}
+
+/* NAVBAR */
+body.dark-mode .navbar {
+background: #111827 !important;
+}
+
+/* MAIN CONTAINERS */
+body.dark-mode .form-card,
+body.dark-mode .summary,
+body.dark-mode .card,
+body.dark-mode .footer,
+body.dark-mode .accordion-item,
+body.dark-mode .line-item,
+body.dark-mode .stat {
+background: #1e293b !important;
+color: white !important;
+border-color: #374151 !important;
+}
+
+/* TEXT */
+body.dark-mode *,
+body.dark-mode a,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+color: white !important;
+}
+
+/* INPUTS */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+background: #0f172a !important;
+color: white !important;
+border: 1px solid #475569 !important;
+}

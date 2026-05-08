@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+{% block title %}ShopKart - Modern Django E-Commerce{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Fast. Secure. Ready to scale.</span>
+      <h1>ShopKart</h1>
+      <p>Discover curated electronics, fashion, home essentials and everyday deals with a clean Django shopping experience.</p>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-dark btn-lg" href="{% url 'products' %}">Shop now</a>
+        <a class="btn btn-outline-dark btn-lg" href="#trending">Trending</a>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <div class="hero-product">New arrivals</div>
+      <div class="display-6 fw-bold">Up to 50% off</div>
+      <p class="text-secondary">Smart deals, live stock, wishlists and invoices in one place.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="section-head">
+    <h2>Shop By Category</h2>
+    <a href="{% url 'products' %}">View all</a>
+  </div>
+  <div class="category-row">
+    {% for category in categories %}
+      <a class="category-pill" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+    {% empty %}
+      <p class="text-secondary">Run the seed command to add demo categories.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container py-4">
+  <div class="section-head">
+    <h2>Featured Products</h2>
+    <a href="{% url 'products' %}?sort=newest">Fresh picks</a>
+  </div>
+  <div class="row g-4">
+    {% for product in featured_products %}
+      <div class="col-6 col-md-4 col-xl-3">{% include 'store/_product_card.html' %}</div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container py-5" id="trending">
+  <div class="section-head">
+    <h2>Trending Now</h2>
+    <a href="{% url 'products' %}?sort=rating">Top rated</a>
+  </div>
+  <div class="row g-4">
+    {% for product in trending_products %}
+      <div class="col-6 col-md-4 col-xl-3">{% include 'store/_product_card.html' %}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

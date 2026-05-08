@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load shop_tags %}
+{% block title %}{{ product.name }} - ShopKart{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-6">
+      <div class="detail-image">
+        {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<div class="placeholder-img big">{{ product.category.name|slice:":1" }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="text-secondary">{{ product.category.name }}</div>
+      <h1>{{ product.name }}</h1>
+      <div class="rating fs-5">★ {{ product.average_rating }} <span class="text-secondary">({{ product.reviews.count }} reviews)</span></div>
+      <div class="d-flex align-items-center gap-3 my-3">
+        <span class="display-6 fw-bold">{{ product.price|money }}</span>
+        {% if product.compare_at_price %}<span class="text-decoration-line-through text-secondary">{{ product.compare_at_price|money }}</span>{% endif %}
+      </div>
+      <p>{{ product.description }}</p>
+      <p class="{% if product.stock > 5 %}text-success{% else %}text-danger{% endif %}">{{ product.stock }} in stock</p>
+      <div class="d-flex gap-2">
+        <form method="post" action="{% url 'add_to_cart' product.id %}" class="d-flex gap-2">{% csrf_token %}
+          <input type="number" class="form-control qty-input" name="quantity" value="1" min="1" max="{{ product.stock }}">
+          <button class="btn btn-dark px-4" {% if product.stock == 0 %}disabled{% endif %}>Add to cart</button>
+        </form>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'toggle_wishlist' product.id %}">{% csrf_token %}<button class="btn btn-outline-dark">♡ Wishlist</button></form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-5 mt-4">
+    <div class="col-lg-7">
+      <h3>Reviews</h3>
+      {% for review in product.reviews.all %}
+        <div class="review">
+          <strong>{{ review.title }}</strong>
+          <div class="rating">★ {{ review.rating }} <span class="text-secondary">by {{ review.user.username }}</span></div>
+          <p>{{ review.comment }}</p>
+        </div>
+      {% empty %}
+        <p class="text-secondary">No reviews yet.</p>
+      {% endfor %}
+    </div>
+    <div class="col-lg-5">
+      {% if user.is_authenticated %}
+      <form class="form-card" method="post" action="{% url 'add_review' product.id %}">{% csrf_token %}
+        <h4>{% if user_review %}Update{% else %}Write{% endif %} a review</h4>
+        {{ review_form.as_p }}
+        <button class="btn btn-dark">Submit review</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <section class="mt-5">
+    <div class="section-head"><h3>Related Products</h3></div>
+    <div class="row g-4">
+      {% for product in related_products %}
+      <div class="col-6 col-md-3">{% include 'store/_product_card.html' %}</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
